@@ -29,11 +29,11 @@ const User = mongoose.model("userInfo");
 
 app.post("/register", async (req, res) => {
 
-    const { fname,lname, email, password } = req.body;
+    const { fname,phone, email, password } = req.body;
 
     const encryptedPassword = await bcrypt.hash(password,10);
     try {
-      const oldUser = await User.findOne({email});
+      const oldUser = await User.findOne({phone});
 
       if(oldUser){
        return res.send({error:"User Exists"});
@@ -43,7 +43,7 @@ app.post("/register", async (req, res) => {
 
         await User.create({
                fname,
-               lname,
+               phone,
                email,
                password:encryptedPassword,
         });
@@ -55,14 +55,14 @@ app.post("/register", async (req, res) => {
 
 
 app.post("/login-user", async (req, res) => {
-    const { email, password } = req.body;
+    const { phone, password } = req.body;
   
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ phone });
     if (!user) {
       return res.json({ error: "User Not found" });
     }
     if (await bcrypt.compare(password, user.password)) {
-      const token = jwt.sign({ email: user.email }, JWT_SECRET);
+      const token = jwt.sign({ phone: user.phone }, JWT_SECRET);
     //   , {
     //     expiresIn: "10s",
     //   });
